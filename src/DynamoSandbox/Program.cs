@@ -1,19 +1,26 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Reflection;
 using System.IO;
-using Dynamo.Controls;
-using Dynamo.DynamoSandbox;
-using Dynamo.Models;
-using Dynamo.ViewModels;
-using Dynamo.Applications;
-using Dynamo.Wpf.ViewModels.Watch3D;
+using System.Linq;
+using System.Diagnostics;
 
 namespace DynamoSandbox
 {
     internal class Program
     {
+        private static string dynamopath;
+
+        [STAThread]
+        public static void Main(string[] args)
+        {   
+            AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+
+            var setup = new DynamoCoreSetup(args);
+            var app = new Application();
+            setup.RunApplication(app);
+        }
+
         /// <summary>
         /// Handler to the ApplicationDomain's AssemblyResolve event.
         /// If an assembly's location cannot be resolved, an exception is
@@ -31,16 +38,22 @@ namespace DynamoSandbox
 
             try
             {
-                assemblyPath = Path.Combine(Dynamo.Applications.StartupUtils.DynamoCorePath, assemblyName);
+
+                Debug.WriteLine("-------------------Dynamo Core Path : " + DynamoCorePath);
+                assemblyPath = Path.Combine(DynamoCorePath, assemblyName);
                 if (File.Exists(assemblyPath))
                 {
+                    Debug.WriteLine("==========assemblyPath EXIST! : " + assemblyPath);
                     return Assembly.LoadFrom(assemblyPath);
                 }
+                else
+                    Debug.WriteLine("-------------------assemblyPath does not exist : " + assemblyPath);
 
                 var assemblyLocation = Assembly.GetExecutingAssembly().Location;
                 var assemblyDirectory = Path.GetDirectoryName(assemblyLocation);
 
                 assemblyPath = Path.Combine(assemblyDirectory, assemblyName);
+                Debug.WriteLine("==========Trying this assemblyPath : " + assemblyPath);
                 return (File.Exists(assemblyPath) ? Assembly.LoadFrom(assemblyPath) : null);
             }
             catch (Exception ex)
@@ -49,23 +62,37 @@ namespace DynamoSandbox
             }
         }
 
-        [DllImport("msvcrt.dll")]
-        public static extern int _putenv(string env);
-
-        [STAThread]
-        public static void Main(string[] args)
+        /// <summary>
+        /// Gets the path of Dynamo Core installation.
+        /// </summary>
+        public static string DynamoCorePath
         {
-            
-            AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+            get
+            {
+                if (string.IsNullOrEmpty(dynamopath))
+                {
+                    dynamopath = GetDynamoCorePath();
+                }
+                return dynamopath;
+            }
+        }
+        
+        /// <summary>
+        /// Finds the Dynamo Core path by looking into registery or potentially a config file.
+        /// </summary>
+        /// <returns>The root folder path of Dynamo Core.</returns>
+        private static string GetDynamoCorePath()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var version = assembly.GetName().Version;
 
-            var cmdLineArgs = StartupUtils.CommandLineArguments.Parse(args);
-            var locale = StartupUtils.SetLocale(cmdLineArgs);
-            _putenv(locale);
+            var installs = DynamoInstallDetective.DynamoProducts.FindDynamoInstallations();
+            if (installs == null) return string.Empty;
 
-            var setup = new DynamoCoreSetup(cmdLineArgs.CommandFilePath);
-            var app = new Application();
-            setup.RunApplication(app);
-            
+            return installs.Products
+                .Where(p => p.VersionInfo.Item1 == version.Major && p.VersionInfo.Item2 == version.Minor)
+                .Select(p => p.InstallLocation)
+                .FirstOrDefault();
         }
     }
 }

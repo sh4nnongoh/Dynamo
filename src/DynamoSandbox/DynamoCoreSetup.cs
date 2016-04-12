@@ -8,6 +8,8 @@ using Dynamo.Logging;
 using Dynamo.Core;
 using Dynamo.Wpf.ViewModels.Watch3D;
 using Dynamo.DynamoSandbox;
+using Dynamo.Applications;
+using System.Runtime.InteropServices;
 
 namespace DynamoSandbox
 {
@@ -17,9 +19,15 @@ namespace DynamoSandbox
         private DynamoViewModel viewModel = null;
         private string commandFilePath;
 
-        public DynamoCoreSetup(string cmdFilePath)
+        [DllImport("msvcrt.dll")]
+        public static extern int _putenv(string env);
+
+        public DynamoCoreSetup(string[] args)
         {
-            commandFilePath = cmdFilePath;
+            var cmdLineArgs = StartupUtils.CommandLineArguments.Parse(args);
+            var locale = StartupUtils.SetLocale(cmdLineArgs);
+            _putenv(locale);
+            commandFilePath = cmdLineArgs.CommandFilePath;
         }
 
         public void RunApplication(Application app)

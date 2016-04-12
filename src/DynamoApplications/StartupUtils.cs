@@ -154,7 +154,7 @@ namespace Dynamo.Applications
                 LibraryVersion.Version222, 
             };
 
-            var preloader = new Preloader(String.IsNullOrEmpty(DynamoCorePath) ? rootFolder : DynamoCorePath, versions);
+            var preloader = new Preloader(rootFolder, versions);
             preloader.Preload();
             geometryFactoryPath = preloader.GeometryFactoryPath;
             preloaderLocation = preloader.PreloaderLocation;
@@ -171,41 +171,6 @@ namespace Dynamo.Applications
             var um = new Dynamo.Updates.UpdateManager(cfg);
             Debug.Assert(cfg.DynamoLookUp != null);
             return um;
-        }
-
-        private static string dynamopath;
-
-        /// <summary>
-        /// Gets the path of Dynamo Core installation.
-        /// </summary>
-        public static string DynamoCorePath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(dynamopath))
-                {
-                    dynamopath = GetDynamoCorePath();
-                }
-                return dynamopath;
-            }
-        }
-
-        /// <summary>
-        /// Finds the Dynamo Core path by looking into registery.
-        /// </summary>
-        /// <returns>The root folder path of Dynamo Core.</returns>
-        private static string GetDynamoCorePath()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var version = assembly.GetName().Version;
-
-            var installs = DynamoInstallDetective.DynamoProducts.FindDynamoInstallations();
-            if (installs == null) return string.Empty;
-
-            return installs.Products
-                .Where(p => p.VersionInfo.Item1 == version.Major && p.VersionInfo.Item2 == version.Minor)
-                .Select(p => p.InstallLocation)
-                .FirstOrDefault();
         }
 
         public static DynamoModel MakeModel(bool CLImode)
