@@ -5,15 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Diagnostics;
 
-namespace DynamoSandbox
+namespace DynamoFusion
 {
-    public class Program
+    internal class Program
     {
         private static string dynamopath;
 
         [STAThread]
         public static void Main(string[] args)
-        {   
+        {
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
 
             //Include Dynamo Core path in System Path variable for helix to load properly.
@@ -71,7 +71,7 @@ namespace DynamoSandbox
                 return dynamopath;
             }
         }
-        
+
         /// <summary>
         /// Finds the Dynamo Core path by looking into registery or potentially a config file.
         /// </summary>

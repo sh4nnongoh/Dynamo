@@ -7,15 +7,15 @@ using Dynamo.ViewModels;
 using Dynamo.Logging;
 using Dynamo.Core;
 using Dynamo.Wpf.ViewModels.Watch3D;
-using Dynamo.DynamoSandbox;
 using Dynamo.Applications;
+using DynamoFusion;
 using System.Runtime.InteropServices;
 
-namespace DynamoSandbox
+namespace DynamoFusion
 {
     class DynamoCoreSetup
     {
-        //private SettingsMigrationWindow migrationWindow;
+        private SettingsMigrationWindow migrationWindow;
         private DynamoViewModel viewModel = null;
         private string commandFilePath;
 
@@ -34,7 +34,7 @@ namespace DynamoSandbox
         {
             try
             {
-                //DynamoModel.RequestMigrationStatusDialog += MigrationStatusDialogRequested;
+                DynamoModel.RequestMigrationStatusDialog += MigrationStatusDialogRequested;
 
                 var model = Dynamo.Applications.StartupUtils.MakeModel(false);
 
@@ -48,11 +48,11 @@ namespace DynamoSandbox
                     });
 
                 var view = new DynamoView(viewModel);
-                //view.Loaded += (sender, args) => CloseMigrationWindow();
+                view.Loaded += (sender, args) => CloseMigrationWindow();
 
                 app.Run(view);
 
-               // DynamoModel.RequestMigrationStatusDialog -= MigrationStatusDialogRequested;
+                DynamoModel.RequestMigrationStatusDialog -= MigrationStatusDialogRequested;
 
             }
 
@@ -90,7 +90,7 @@ namespace DynamoSandbox
                 Debug.WriteLine(e.StackTrace);
             }
         }
-        /*
+
         private void CloseMigrationWindow()
         {
             if (migrationWindow == null)
@@ -112,6 +112,6 @@ namespace DynamoSandbox
                 CloseMigrationWindow();
             }
         }
-        */
+
     }
 }
