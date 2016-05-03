@@ -15,7 +15,7 @@ namespace DynamoFusion
 {
     class DynamoCoreSetup
     {
-        private SettingsMigrationWindow migrationWindow;
+        //private SettingsMigrationWindow migrationWindow;
         private DynamoViewModel viewModel = null;
         private string commandFilePath;
 
@@ -34,7 +34,7 @@ namespace DynamoFusion
         {
             try
             {
-                DynamoModel.RequestMigrationStatusDialog += MigrationStatusDialogRequested;
+                //DynamoModel.RequestMigrationStatusDialog += MigrationStatusDialogRequested;
 
                 var model = Dynamo.Applications.StartupUtils.MakeModel(false);
 
@@ -48,11 +48,11 @@ namespace DynamoFusion
                     });
 
                 var view = new DynamoView(viewModel);
-                view.Loaded += (sender, args) => CloseMigrationWindow();
+                //view.Loaded += (sender, args) => CloseMigrationWindow();
 
                 app.Run(view);
 
-                DynamoModel.RequestMigrationStatusDialog -= MigrationStatusDialogRequested;
+               // DynamoModel.RequestMigrationStatusDialog -= MigrationStatusDialogRequested;
 
             }
 
@@ -68,8 +68,8 @@ namespace DynamoFusion
 #endif
 
                     DynamoModel.IsCrashing = true;
-                    InstrumentationLogger.LogException(e);
-                    StabilityTracking.GetInstance().NotifyCrash();
+                    //InstrumentationLogger.LogException(e);
+                    //StabilityTracking.GetInstance().NotifyCrash();
 
                     if (viewModel != null)
                     {
@@ -90,7 +90,7 @@ namespace DynamoFusion
                 Debug.WriteLine(e.StackTrace);
             }
         }
-
+        /*
         private void CloseMigrationWindow()
         {
             if (migrationWindow == null)
@@ -112,6 +112,6 @@ namespace DynamoFusion
                 CloseMigrationWindow();
             }
         }
-
+        */
     }
 }

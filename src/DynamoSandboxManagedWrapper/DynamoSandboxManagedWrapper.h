@@ -1,36 +1,16 @@
 // DynamoSandboxManagedWrapper.h
-
-
 #pragma once
-/*
-#ifdef DYNAMOSANDBOXMANAGEDWRAPPER_EXPORTS
-#define DYNAMOSANDBOXMANAGEDWRAPPER_API __declspec(dllexport)
-#else
-#define DYNAMOSANDBOXMANAGEDWRAPPER_API __declspec(dllimport)
-#endif
-*/
-using namespace System;
-using namespace DynamoSandboxWrapper;
 
-public ref class DynamoSandboxManagedWrapper {
-public:
-	// Allocate the native object on the C++ Heap via a constructor
-	DynamoSandboxManagedWrapper() {
+class DynamoSandboxManagedWrapperPrivate;
 
-	}
+class __declspec(dllexport) DynamoSandboxManagedWrapper
+{
 
-	// Deallocate the native object on a destructor
-	~DynamoSandboxManagedWrapper() {
-	}
+public: DynamoSandboxManagedWrapper();
 
-protected:
-	// Deallocate the native object on the finalizer just in case no destructor is called
-	!DynamoSandboxManagedWrapper() {
-	}
+public: ~DynamoSandboxManagedWrapper();
 
-public:
-	static void Initialize();
-
-private:
+public: void Initialize1();
 
 };
+

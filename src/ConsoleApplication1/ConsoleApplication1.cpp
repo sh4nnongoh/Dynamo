@@ -6,7 +6,8 @@
 
 int main()
 {
-	DynamoSandboxManagedWrapper
+	DynamoSandboxManagedWrapper* test = new DynamoSandboxManagedWrapper();
+	test->Initialize1();
     return 0;
 }
 

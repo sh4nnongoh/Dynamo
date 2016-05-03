@@ -19,7 +19,7 @@ namespace DynamoSandbox
         private DynamoViewModel viewModel = null;
         private string commandFilePath;
 
-        [DllImport("msvcrt.dll")]
+        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _putenv(string env);
 
         public DynamoCoreSetup(string[] args)

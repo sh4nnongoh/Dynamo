@@ -1,32 +1,22 @@
 ﻿using System;
-using System.Windows;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using DynamoSandboxWrapper;
 using System.Reflection;
 using System.IO;
-using System.Linq;
-using System.Diagnostics;
 
-namespace DynamoSandbox
-{ // http://www.codeproject.com/Articles/310675/AppDomain-AssemblyResolve-Event-Tips
-    public static class Program
+namespace ConsoleApplication2
+{
+    class Program
     {
         private static string dynamopath;
-
-        static Program()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
-        }
-
         [STAThread]
-        public static void Main(string[] args)
-        {   
+        static void Main(string[] args)
+        {
             //AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
-
-            //Include Dynamo Core path in System Path variable for helix to load properly.
-            UpdateSystemPathForProcess();
-
-            var setup = new DynamoCoreSetup(args);
-            var app = new Application();
-            setup.RunApplication(app);
+            DynamoSandboxWrapper.DynamoCSharpWrapper.Initialize();
         }
 
         /// <summary>
@@ -76,7 +66,7 @@ namespace DynamoSandbox
                 return dynamopath;
             }
         }
-        
+
         /// <summary>
         /// Finds the Dynamo Core path by looking into registery or potentially a config file.
         /// </summary>
@@ -95,17 +85,5 @@ namespace DynamoSandbox
                 .FirstOrDefault();
         }
 
-        /// <summary>
-        /// Add Dynamo Core location to the PATH system environment variable.
-        /// This is to make sure dependencies (e.g. Helix assemblies) can be located.
-        /// </summary>
-        private static void UpdateSystemPathForProcess()
-        {
-            var path =
-                    Environment.GetEnvironmentVariable(
-                        "Path",
-                        EnvironmentVariableTarget.Process) + ";" + DynamoCorePath;
-            Environment.SetEnvironmentVariable("Path", path, EnvironmentVariableTarget.Process);
-        }
     }
 }
