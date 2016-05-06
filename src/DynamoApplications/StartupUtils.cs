@@ -194,6 +194,39 @@ namespace Dynamo.Applications
             return model;
         }
 
+        public static DynamoModel MakeModel(bool CLImode, string asmLocation)
+        {
+            var exePath = Assembly.GetExecutingAssembly().Location;
+            var rootFolder = Path.GetDirectoryName(exePath);
+
+            var versions = new[]
+            {
+                LibraryVersion.Version222
+            };
+
+            var preloader = new Preloader(rootFolder, versions);
+            preloader.Preload();
+
+            //var version = LibraryVersion.Version222;
+            var libGFolderName = string.Format("libg_{0}", ((int)versions[0]));
+            var preloaderLocation = Path.Combine(rootFolder, libGFolderName);
+            var geometryFactoryPath = Path.Combine(preloaderLocation, DynamoShapeManager.Utilities.GeometryFactoryAssembly);
+
+            var config = new DynamoModel.DefaultStartConfiguration()
+            {
+                GeometryFactoryPath = geometryFactoryPath,
+                ProcessMode = TaskProcessMode.Asynchronous
+            };
+
+            config.UpdateManager = CLImode ? null : InitializeUpdateManager();
+            config.StartInTestMode = CLImode ? true : false;
+            config.PathResolver = CLImode ? new CLIPathResolver(asmLocation) as IPathResolver : new SandboxPathResolver(asmLocation) as IPathResolver;
+
+            var model = DynamoModel.Start(config);
+            return model;
+        }
+
+
         public static string SetLocale(CommandLineArguments cmdLineArgs)
         {
             var supportedLocale = new HashSet<string>(new[]
