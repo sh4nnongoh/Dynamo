@@ -80,12 +80,15 @@
     
     <!-- Copy README file to install folder -->
     <Exec Command="xcopy /y $(DYNAMO_BASE_PATH)\bin\AnyCPU\$(Configuration)\README.txt $(DYNAMO_BASE_PATH)\tools\install\Installers\" IgnoreExitCode="true" />
+    <!-- Copy Icons to bin folder -->
+    <Exec Command="xcopy /y $(DYNAMO_BASE_PATH)\tools\install\Extra\Dynamo.ico $(DYNAMO_BASE_PATH)\bin\AnyCPU\$(Configuration)\" IgnoreExitCode="true" />
     
     <HeatDirectory  Directory="$(DYNAMO_HARVEST_PATH)" 
                     PreprocessorVariable="var.harvest" 
                     OutputFile="$(ProjectDir)Release-autogen.wxs" 
                     ComponentGroupName="RELEASE" 
                     DirectoryRefId="DYNAMO_INSTALLDIR" 
+                    AutogenerateGuids="true"
                     GenerateGuidsNow="true" 
                     Transforms="$(ProjectDir)Release.xsl" 
                     ToolPath="$(WixToolPath)" 

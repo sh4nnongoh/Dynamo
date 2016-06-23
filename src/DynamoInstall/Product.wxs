@@ -58,14 +58,16 @@
       <ComponentRef Id="ProductRegistry" />
     </Feature>
 
-    <Icon Id="DynamoInstaller.ico" SourceFile="$(var.base)\tools\install\Extra\DynamoInstaller.ico"/>
-    <Property Id="ARPPRODUCTICON" Value="DynamoInstaller.ico" />
+    <!--Icon Id="DynamoInstaller.ico" SourceFile="$(var.base)\tools\install\Extra\DynamoInstaller.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="DynamoInstaller.ico" /-->
 
   </Product>
 
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="DYNAMO_INSTALLDIR"/>
+      <Directory Id="TempFolder">
+        <Directory Id="DYNAMO_INSTALLDIR"/>
+      </Directory>
       <Directory Id="CommonAppDataFolder">
         <Directory Id="DYNAMO_PROGDATA" Name="Dynamo">
           <Directory Id="DYNAMO_CORE_PROGDATA" Name="$(var.ProductName)">
@@ -84,7 +86,10 @@
           <RegistryValue Name="InstallLocation" Value="[DYNAMO_INSTALLDIR]" Type="string" />
           <RegistryValue Name="UninstallString" Value="MsiExec.exe" Type="string" />
           <RegistryValue Name="UninstallParam" Value="/X[ProductCode] /quiet" Type="string" />
-          <RegistryValue Name="Version" Value="$(var.Major).$(var.Minor).$(var.Build)" Type="string" />
+          <RegistryValue Name="DisplayIcon" Value="[DYNAMO_INSTALLDIR]Dynamo.ico" Type="string" />
+          <RegistryValue Name="DisplayName" Value="[ProductName]" Type="string" />
+          <RegistryValue Name="DisplayVersion" Value="$(var.Major).$(var.Minor).$(var.Build).$(var.Rev)" Type="string" />
+          <RegistryValue Name="Publisher" Value="[Manufacturer]" Type="string" />
           <RegistryValue Name="RevVersion" Value="$(var.Rev)" Type="integer" />
         </RegistryKey>
       </Component>
